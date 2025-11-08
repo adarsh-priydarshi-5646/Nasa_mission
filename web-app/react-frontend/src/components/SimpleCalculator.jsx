@@ -1,9 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardHeader, CardTitle, CardContent } from './ui/card';
-import { Button } from './ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
-import { RotateCcw, Brain, Search, Globe, Atom, Zap, Thermometer, Rocket, Activity, Wind } from 'lucide-react';
+import {  Brain, Search, Globe, Atom, Zap, Thermometer, Rocket, Activity, Wind } from 'lucide-react';
 import './SimpleCalculator.css';
 
 const CONSTANTS = {
@@ -26,7 +25,6 @@ const SimpleCalculator = ({ selectedFormulaId }) => {
 
   const handleInputChange = (key, value) => setInputs(prev => ({ ...prev, [key]: value }));
 
-  const resetCalculator = () => window.location.reload();
 
   const calculations = useMemo(() => {
     const results = {};
