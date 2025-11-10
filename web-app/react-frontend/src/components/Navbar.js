@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Menu, X, Star, Brain, Users, Calculator, Play } from 'lucide-react';
+import { Menu, X, Star, Brain, Users, Calculator, Play, Globe } from 'lucide-react';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -24,6 +24,7 @@ const Navbar = () => {
     { name: 'Solution', path: '/solution', icon: Brain },
     { name: 'Formulas', path: '/formulas', icon: Calculator },
     { name: 'Playground', path: '/playground', icon: Play },
+    { name: 'Visualizer', path: '/visualizer', icon: Globe },
   ];
 
   return (
