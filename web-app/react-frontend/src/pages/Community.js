@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import {
   Users,
   MessageCircle,
+  Star,
   Plus,
   Search,
   Share2,
@@ -301,6 +302,7 @@ const Community = () => {
       case 'discovery': return Target;
       case 'research': return BookOpen;
       case 'discussion': return MessageCircle;
+      case 'showcase': return Star;
       default: return MessageCircle;
     }
   };
@@ -447,8 +449,13 @@ const Community = () => {
                   <Award size={14} />
                   {paper.citations} citations
                 </span>
-                <a href={`https://doi.org/${paper.doi}`} className="doi-link">
-                  DOI: {paper.doi}
+                <a 
+                  href={paper.doi.startsWith('http') ? paper.doi : `https://doi.org/${paper.doi}`} 
+                  className="doi-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {paper.doi.startsWith('http') ? 'View Paper' : `DOI: ${paper.doi}`}
                 </a>
               </div>
             </div>
