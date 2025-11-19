@@ -107,6 +107,8 @@ const Community = () => {
     }
   ]);
   const [showModal, setShowModal] = useState(false);
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
+  const [answerText, setAnswerText] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     author: '',
@@ -116,6 +118,23 @@ const Community = () => {
     tags: '',
     content: ''
   });
+
+  // Load discussions from localStorage on mount
+  React.useEffect(() => {
+    const savedDiscussions = localStorage.getItem('community_discussions');
+    if (savedDiscussions) {
+      try {
+        setDiscussions(JSON.parse(savedDiscussions));
+      } catch (error) {
+        console.log('Error loading discussions:', error);
+      }
+    }
+  }, []);
+
+  // Save discussions to localStorage whenever they change
+  React.useEffect(() => {
+    localStorage.setItem('community_discussions', JSON.stringify(discussions));
+  }, [discussions]);
 
   const tabs = [
     { id: 'discussions', label: 'Discussions', icon: MessageCircle },
@@ -216,6 +235,46 @@ const Community = () => {
     }
   };
 
+  const handlePostAnswer = (e) => {
+    e.preventDefault();
+    
+    if (!answerText.trim()) {
+      alert('Please write an answer');
+      return;
+    }
+
+    if (!selectedQuestion) return;
+
+    const newAnswer = {
+      id: Math.max(...selectedQuestion.answers_list.map(a => a.id), 0) + 1,
+      author: 'You',
+      content: answerText,
+      votes: 0,
+      timeAgo: 'just now'
+    };
+
+    // Update the selected question with new answer
+    const updatedQuestion = {
+      ...selectedQuestion,
+      answers_list: [newAnswer, ...selectedQuestion.answers_list],
+      answers: selectedQuestion.answers + 1
+    };
+
+    // Update questions array
+    const updatedQuestions = questions.map(q => 
+      q.id === selectedQuestion.id ? updatedQuestion : q
+    );
+
+    // Update the state
+    setSelectedQuestion(updatedQuestion);
+    setAnswerText('');
+    
+    // Save to localStorage
+    localStorage.setItem('community_questions', JSON.stringify(updatedQuestions));
+    
+    alert('Answer posted successfully!');
+  };
+
   const researchPapers = [
     {
       id: 1,
@@ -250,7 +309,24 @@ const Community = () => {
       answers: 5,
       votes: 12,
       timeAgo: '4 hours ago',
-      isAnswered: true
+      isAnswered: true,
+      description: 'I am trying to understand the methods used to analyze exoplanet atmospheres. What are the main techniques and instruments used?',
+      answers_list: [
+        {
+          id: 1,
+          author: 'Dr. Sarah Chen',
+          content: 'The primary method is transmission spectroscopy. When an exoplanet passes in front of its host star, some of the starlight filters through the planet\'s atmosphere. Different atmospheric gases absorb different wavelengths of light, creating a unique spectral signature.',
+          votes: 8,
+          timeAgo: '3 hours ago'
+        },
+        {
+          id: 2,
+          author: 'Prof. Michael Rodriguez',
+          content: 'Another important technique is emission spectroscopy, where we measure the infrared radiation emitted by the planet\'s atmosphere. This is particularly useful for hot Jupiters.',
+          votes: 4,
+          timeAgo: '2 hours ago'
+        }
+      ]
     },
     {
       id: 2,
@@ -260,7 +336,17 @@ const Community = () => {
       answers: 3,
       votes: 8,
       timeAgo: '1 day ago',
-      isAnswered: false
+      isAnswered: false,
+      description: 'I keep hearing about these two definitions of habitable zones. Can someone explain the difference and why both are used?',
+      answers_list: [
+        {
+          id: 1,
+          author: 'Dr. Emily Watson',
+          content: 'The conservative habitable zone is more restrictive - it only includes planets where Earth-like conditions could exist. The optimistic zone is broader and includes planets where life might exist under different conditions.',
+          votes: 5,
+          timeAgo: '20 hours ago'
+        }
+      ]
     },
     {
       id: 3,
@@ -270,7 +356,24 @@ const Community = () => {
       answers: 7,
       votes: 15,
       timeAgo: '2 days ago',
-      isAnswered: true
+      isAnswered: true,
+      description: 'I\'m working on a research project about exoplanet characterization. How reliable are the mass measurements we get from radial velocity and transit timing?',
+      answers_list: [
+        {
+          id: 1,
+          author: 'Dr. James Liu',
+          content: 'Radial velocity measurements typically have uncertainties of 10-30% for well-observed planets. Transit timing variations can be even more precise for multi-planet systems.',
+          votes: 7,
+          timeAgo: '1 day ago'
+        },
+        {
+          id: 2,
+          author: 'Prof. Michael Rodriguez',
+          content: 'The accuracy depends heavily on the quality of observations and the orbital characteristics of the planet. Planets with longer orbital periods are generally harder to measure accurately.',
+          votes: 3,
+          timeAgo: '18 hours ago'
+        }
+      ]
     }
   ];
 
@@ -280,6 +383,16 @@ const Community = () => {
     { label: 'Research Papers', value: '456', icon: BookOpen },
     { label: 'Questions Answered', value: '3,891', icon: MessageSquare }
   ];
+
+  // Update selectedQuestion when questions change
+  React.useEffect(() => {
+    if (selectedQuestion) {
+      const updatedQuestion = questions.find(q => q.id === selectedQuestion.id);
+      if (updatedQuestion) {
+        setSelectedQuestion(updatedQuestion);
+      }
+    }
+  }, [questions, selectedQuestion]);
 
   const filteredDiscussions = discussions.filter(discussion =>
     discussion.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -476,6 +589,8 @@ const Community = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: index * 0.1 }}
             whileHover={{ y: -2 }}
+            onClick={() => setSelectedQuestion(question)}
+            style={{ cursor: 'pointer' }}
           >
             <div className="question-header">
               <h3 className="question-title">{question.title}</h3>
@@ -761,6 +876,103 @@ const Community = () => {
                   </button>
                 </div>
               </form>
+            </motion.div>
+          </div>
+        )}
+
+        {/* Question Detail Modal */}
+        {selectedQuestion && (
+          <div className="modal-overlay" onClick={() => setSelectedQuestion(null)}>
+            <motion.div
+              className="modal-content question-detail-modal"
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="modal-header">
+                <h2>{selectedQuestion.title}</h2>
+                <button
+                  className="modal-close"
+                  onClick={() => setSelectedQuestion(null)}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div className="question-detail-content">
+                <div className="question-detail-meta">
+                  <div className="detail-author">
+                    <User size={16} />
+                    <div>
+                      <div className="detail-author-name">{selectedQuestion.author}</div>
+                      <div className="detail-time">{selectedQuestion.timeAgo}</div>
+                    </div>
+                  </div>
+                  <div className="detail-badges">
+                    {selectedQuestion.isAnswered && (
+                      <span className="badge answered">✅ Answered</span>
+                    )}
+                    <span className="badge category">{selectedQuestion.category}</span>
+                  </div>
+                </div>
+
+                <p className="question-detail-description">{selectedQuestion.description}</p>
+
+                <div className="question-detail-stats">
+                  <div className="stat">
+                    <MessageSquare size={16} />
+                    <span>{selectedQuestion.answers} answers</span>
+                  </div>
+                  <div className="stat">
+                    <ThumbsUp size={16} />
+                    <span>{selectedQuestion.votes} votes</span>
+                  </div>
+                </div>
+
+                <div className="answers-section">
+                  <h3 className="answers-title">Answers ({selectedQuestion.answers_list.length})</h3>
+                  <div className="answers-list">
+                    {selectedQuestion.answers_list.map((answer) => (
+                      <div key={answer.id} className="answer-item">
+                        <div className="answer-header">
+                          <div className="answer-author">{answer.author}</div>
+                          <div className="answer-time">{answer.timeAgo}</div>
+                        </div>
+                        <p className="answer-content">{answer.content}</p>
+                        <div className="answer-actions">
+                          <button className="answer-action-btn">
+                            <ThumbsUp size={14} />
+                            {answer.votes}
+                          </button>
+                          <button className="answer-action-btn">
+                            <Reply size={14} />
+                            Reply
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="add-answer-section">
+                  <h3>Add Your Answer</h3>
+                  <textarea
+                    placeholder="Share your knowledge and help the community..."
+                    className="answer-textarea"
+                    rows="4"
+                    value={answerText}
+                    onChange={(e) => setAnswerText(e.target.value)}
+                  />
+                  <button 
+                    className="btn btn-primary"
+                    onClick={handlePostAnswer}
+                  >
+                    <Plus size={16} />
+                    Post Answer
+                  </button>
+                </div>
+              </div>
             </motion.div>
           </div>
         )}

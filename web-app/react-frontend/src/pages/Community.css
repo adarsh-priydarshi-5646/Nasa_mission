@@ -689,6 +689,7 @@
   justify-content: center;
   z-index: 1000;
   padding: 20px;
+  pointer-events: auto;
 }
 
 .modal-content {
@@ -701,6 +702,7 @@
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+  pointer-events: auto;
 }
 
 .modal-header {
@@ -735,11 +737,18 @@
   justify-content: center;
   border-radius: 8px;
   transition: all 0.3s ease;
+  pointer-events: auto;
+  flex-shrink: 0;
+  z-index: 1001;
 }
 
 .modal-close:hover {
   background: rgba(255, 255, 255, 0.1);
   color: white;
+}
+
+.modal-close:active {
+  transform: scale(0.95);
 }
 
 .discussion-form {
@@ -815,6 +824,201 @@
 
 .form-actions button {
   flex: 1;
+}
+
+/* Question Detail Modal */
+.question-detail-modal {
+  max-width: 700px;
+  max-height: 85vh;
+}
+
+.question-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.question-detail-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-author {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.detail-author svg {
+  color: #667eea;
+  margin-top: 2px;
+}
+
+.detail-author-name {
+  font-weight: 600;
+  color: white;
+  font-size: 0.95rem;
+}
+
+.detail-time {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.detail-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.question-detail-description {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.question-detail-stats {
+  display: flex;
+  gap: 24px;
+  padding: 16px;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 12px;
+}
+
+.question-detail-stats .stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.question-detail-stats svg {
+  color: #667eea;
+}
+
+.answers-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.answers-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.answers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.answer-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.answer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.answer-author {
+  font-weight: 600;
+  color: #667eea;
+  font-size: 0.95rem;
+}
+
+.answer-time {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+}
+
+.answer-content {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.answer-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.answer-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.answer-action-btn:hover {
+  background: rgba(102, 126, 234, 0.15);
+  border-color: rgba(102, 126, 234, 0.4);
+  color: #667eea;
+}
+
+.add-answer-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.add-answer-section h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.answer-textarea {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  color: white;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: all 0.3s ease;
+}
+
+.answer-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.answer-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 /* CTA Section */
