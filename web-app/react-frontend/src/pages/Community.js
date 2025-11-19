@@ -235,6 +235,11 @@ const Community = () => {
     }
   };
 
+  const closeQuestionModal = React.useCallback(() => {
+    console.log('Closing question modal');
+    setSelectedQuestion(null);
+  }, []);
+
   const handlePostAnswer = (e) => {
     e.preventDefault();
     
@@ -384,15 +389,19 @@ const Community = () => {
     { label: 'Questions Answered', value: '3,891', icon: MessageSquare }
   ];
 
-  // Update selectedQuestion when questions change
+  // Handle escape key to close modal
   React.useEffect(() => {
-    if (selectedQuestion) {
-      const updatedQuestion = questions.find(q => q.id === selectedQuestion.id);
-      if (updatedQuestion) {
-        setSelectedQuestion(updatedQuestion);
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        setSelectedQuestion(null);
       }
+    };
+    
+    if (selectedQuestion) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
     }
-  }, [questions, selectedQuestion]);
+  }, [selectedQuestion]);
 
   const filteredDiscussions = discussions.filter(discussion =>
     discussion.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -884,11 +893,7 @@ const Community = () => {
         {selectedQuestion && (
           <div 
             className="modal-overlay" 
-            onClick={(e) => {
-              if (e.target === e.currentTarget) {
-                setSelectedQuestion(null);
-              }
-            }}
+            onClick={closeQuestionModal}
           >
             <motion.div
               className="modal-content question-detail-modal"
@@ -905,7 +910,7 @@ const Community = () => {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    setSelectedQuestion(null);
+                    closeQuestionModal();
                   }}
                 >
                   ✕
